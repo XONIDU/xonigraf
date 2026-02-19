@@ -1,4 +1,3 @@
-```markdown
 # XoniGraf Simple - Graficador Matemático con Sumatorias
 
 Aplicación de escritorio liviana para graficar funciones matemáticas, especialmente diseñada para **ASUS Eee PC** y equipos de bajos recursos. Soporta **sumatorias**, funciones trigonométricas y expresiones complejas.
@@ -24,7 +23,6 @@ pip install sympy numpy matplotlib
 
 # Ejecutar
 python start.py
-```
 
 *Nota: Si falta alguna dependencia, el programa intentará instalarla automáticamente.*
 
