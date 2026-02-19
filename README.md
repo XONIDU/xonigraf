@@ -103,4 +103,4 @@ Sum((-4/(pi*x**2))*(cos(pi*x/2)-1)*cos(n/2), (n,1,8))
 ---
 
 *Optimizado para correr en ASUS Eee PC 900 con 1GB RAM y procesador Celeron M 900MHz* 🚀
-```
+
