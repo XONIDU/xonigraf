@@ -100,7 +100,7 @@ Sum((-4/(pi*x**2))*(cos(pi*x/2)-1)*cos(n/2), (n,1,8))
 
 **Creador:** Darian Alberto Camacho Salas  
 **Email:** [xonidu@gmail.com](mailto:xonidu@gmail.com)  
-**Proyecto:** XoniGraf - Para ASUS Eee PC y equipos de bajos recursos
+**Proyecto:** XoniGraf - Para equipos de bajos recursos
 
 ---
 
