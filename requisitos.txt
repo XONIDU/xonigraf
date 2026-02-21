@@ -1,4 +1,4 @@
-# Somos XONINDU
+# Somos: XONINDU
 # Creador: Darian Alberto Camacho Salas
 # XoniGraf Simple - Graficador matemático con sumatorias
 
