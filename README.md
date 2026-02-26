@@ -24,6 +24,10 @@ pip install sympy numpy matplotlib
 # Ejecutar
 python start.py
 
+#o
+
+python3 start.py
+
 *Nota: Si falta alguna dependencia, el programa intentará instalarla automáticamente.*
 
 ## 🎮 Cómo usar
@@ -31,6 +35,10 @@ python start.py
 1. **Ejecuta** el programa:
    ```bash
    python start.py
+
+   #o
+
+   python3 start.py
    ```
 
 2. **Ingresa tu función** en el campo de texto usando sintaxis de Python/sympy.
