@@ -79,7 +79,3 @@ python3 start.py
 Darian Alberto Camacho Salas (XONIDU)
 
 Email: xonidu@gmail.com
-
-## 📄 Licencia
-
-MIT License
