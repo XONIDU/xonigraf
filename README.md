@@ -1,4 +1,4 @@
-# XoniGraf - Graficador Matemático de Bajos Recursos
+# XoniGraf - Graficador Matemático de Bajos Recursos v4.2.0
 
 Desarrollado por: Darian Alberto Camacho Salas
 
@@ -164,3 +164,5 @@ xonigraf/
 - **📧 Email:** xonidu@gmail.com
 - **📸 Instagram:** @xonidu
 - **💻 GitHub:** [XONIDU/xonigraf](https://github.com/XONIDU/xonigraf)
+
+## SOMOS XONIDU
