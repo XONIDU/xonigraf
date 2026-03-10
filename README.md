@@ -35,19 +35,22 @@ text
 ```bash
 # Abre CMD o PowerShell y escribe:
 python start.py
+```
 
 🐧 PARA LINUX
-bash
+```bash
 
 # Abre terminal y escribe:
 python3 start.py
+```
 
 🍎 PARA macOS
-bash
+```bash
 
 # Abre terminal y escribe:
 python3 start.py
 
+```
 🎮 CÓMO USAR XoniGraf
 
 1️⃣ Ejecuta el programa:
@@ -110,8 +113,7 @@ No se ve la gráfica	Verifica rango X válido (ej: -5,5)
 
     💻 GitHub: XONIDU/xonigraf
 
-text
-
+```bash
 ╔════════════════════════════════════╗
 ║   XoniGraf 2026 - Hecho con ❤️      ║
 ║   por Darian Alberto Camacho Salas ║
