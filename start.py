@@ -96,7 +96,7 @@ def print_banner():
     }.get(sistema, 'DESCONOCIDO')
     
     banner = f"""
-{Colors.BLUE}{Colors.BOLD}╔═════════════════════════════════════════════════════════╗
+{Colors.BLUE}{Colors.BOLD}╔════════════════════════════════════════════════════════════╗
 ║                     XoniGraf 2026 v1.0                     ║
 ║                 Graficador Matemático Ligero               ║
 ║                Para equipos de bajos recursos              ║
