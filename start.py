@@ -1,9 +1,3 @@
-
----
-
-## start.py
-
-```python
 """
 XoniGraf 2026 - Lanzador Universal
 Este script es el ENCARGADO de ejecutar xonigraf.py
