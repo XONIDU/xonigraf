@@ -1,6 +1,6 @@
 # XoniGraf - Graficador Matemático de Bajos Recursos
 
-Desarrollado por: Darian Alberto Camacho Salas
+Desarrollador: Darian Alberto Camacho Salas
 
 Aplicación de escritorio liviana para graficar funciones matemáticas, especialmente diseñada para ASUS Eee PC y equipos de bajos recursos. Soporta sumatorias, funciones trigonométricas y expresiones complejas.
 
