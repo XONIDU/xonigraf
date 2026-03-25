@@ -1,4 +1,4 @@
-# XoniGraf - Graficador matemático con sumatorias
+# XoniGraf: Graficador matemático con sumatorias
 # Desarrollado por: Darian Alberto Camacho Salas
 # Dependencias principales
 sympy==1.12
