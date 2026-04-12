@@ -84,6 +84,52 @@ def get_python_command():
         except:
             return ['python']
 
+def check_pip():
+    """Verifica si pip está instalado"""
+    python_cmd = get_python_command()
+    try:
+        subprocess.run(python_cmd + ['-m', 'pip', '--version'], 
+                      capture_output=True, check=True)
+        return True
+    except:
+        return False
+
+def install_pip():
+    """Instala pip en Linux según la distribución detectada"""
+    sistema = get_system()
+    if sistema != 'linux':
+        return True  # En Windows/macOS se instala con Python por defecto
+    
+    distro = get_linux_distro()
+    print(f"\n{Colors.BOLD}Instalando pip en {distro.upper()}...{Colors.END}")
+    
+    # Comandos por distribución
+    if distro in ['ubuntu', 'debian', 'mint', 'antix']:
+        cmd = ['sudo', 'apt', 'update']
+        subprocess.run(cmd, check=False)
+        cmd = ['sudo', 'apt', 'install', '-y', 'python3-pip']
+    elif distro in ['arch', 'manjaro']:
+        cmd = ['sudo', 'pacman', '-S', '--noconfirm', 'python-pip']
+    elif distro in ['fedora']:
+        cmd = ['sudo', 'dnf', 'install', '-y', 'python3-pip']
+    elif distro in ['centos']:
+        cmd = ['sudo', 'yum', 'install', '-y', 'python3-pip']
+    elif distro in ['opensuse', 'suse']:
+        cmd = ['sudo', 'zypper', 'install', '-y', 'python3-pip']
+    else:
+        print(f"{Colors.YELLOW}Distribución no reconocida. Instala pip manualmente:{Colors.END}")
+        print("  https://pip.pypa.io/en/stable/installation/")
+        return False
+    
+    try:
+        print(f"Ejecutando: {' '.join(cmd)}")
+        subprocess.run(cmd, check=True)
+        print(f"{Colors.GREEN}pip instalado correctamente{Colors.END}")
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"{Colors.RED}Error instalando pip: {e}{Colors.END}")
+        return False
+
 def print_banner():
     """Muestra el banner de XoniGraf"""
     sistema = get_system()
@@ -96,16 +142,16 @@ def print_banner():
     }.get(sistema, 'DESCONOCIDO')
     
     banner = f"""
-{Colors.BLUE}{Colors.BOLD}╔════════════════════════════════════════════════════════════╗
-║                     XoniGraf 2026 v1.0                     ║
-║                 Graficador Matemático Ligero               ║
-║                Para equipos de bajos recursos              ║
+{Colors.BLUE}{Colors.BOLD}╔══════════════════════════════════════════════════════════╗
+║                     XoniGraf 2026 v1.0                      ║
+║                 Graficador Matemático Ligero                ║
+║                Para equipos de bajos recursos               ║
 ║                                                            ║
-               Sistema detectado: {sistema_texto}           
+║               Sistema detectado: {sistema_texto}            ║
 ║                                                            ║
 ║               Desarrollado por: Darian Alberto             ║
 ║                      Camacho Salas                         ║
-╚════════════════════════════════════════════════════════════╝{Colors.END}
+╚══════════════════════════════════════════════════════════════╝{Colors.END}
     """
     print(banner)
 
@@ -209,22 +255,20 @@ def install_python_packages(packages):
         try:
             # Usar --break-system-packages en Linux, en Windows no
             if get_system() == 'linux':
-                subprocess.run(python_cmd + ['-m', 'pip', 'install', '--user', package, '--break-system-packages'], 
-                             check=True, capture_output=True)
+                # Intentar con --break-system-packages primero
+                result = subprocess.run(python_cmd + ['-m', 'pip', 'install', '--user', package, '--break-system-packages'], 
+                             capture_output=True)
+                if result.returncode != 0:
+                    # Si falla, intentar sin esa opción
+                    subprocess.run(python_cmd + ['-m', 'pip', 'install', '--user', package], 
+                                 check=True, capture_output=True)
             else:
                 subprocess.run(python_cmd + ['-m', 'pip', 'install', '--user', package], 
                              check=True, capture_output=True)
             print(f"{Colors.GREEN}  ✓ {package} instalado{Colors.END}")
         except subprocess.CalledProcessError as e:
             print(f"{Colors.RED}  ✗ Error instalando {package}{Colors.END}")
-            # Segundo intento sin --break-system-packages
-            try:
-                print(f"Reintentando sin --break-system-packages...")
-                subprocess.run(python_cmd + ['-m', 'pip', 'install', '--user', package], 
-                             check=True, capture_output=True)
-                print(f"{Colors.GREEN}  ✓ {package} instalado en segundo intento{Colors.END}")
-            except:
-                return False
+            return False
     return True
 
 def mostrar_instrucciones_python():
@@ -326,6 +370,22 @@ def main():
     print(f"{Colors.BOLD}Python:{Colors.END} {python_version}")
     print(f"{Colors.BOLD}Ruta:{Colors.END} {os.path.dirname(os.path.abspath(__file__))}")
     
+    # Verificar pip en Linux e instalarlo si falta
+    if sistema == 'linux' and not check_pip():
+        print(f"\n{Colors.YELLOW}No se encontró pip en el sistema.{Colors.END}")
+        respuesta = input("¿Instalar pip automáticamente? (s/n): ")
+        if respuesta.lower() == 's':
+            if install_pip():
+                print(f"{Colors.GREEN}Pip instalado. Continuando...{Colors.END}")
+                time.sleep(1)
+            else:
+                print(f"{Colors.RED}No se pudo instalar pip automáticamente.{Colors.END}")
+                print("Instálalo manualmente y vuelve a ejecutar este script.")
+                input(f"\n{Colors.YELLOW}Presiona Enter para salir...{Colors.END}")
+                return
+        else:
+            print(f"{Colors.YELLOW}No se instalará pip. Es posible que algunas dependencias no se instalen.{Colors.END}")
+    
     # Verificar dependencias
     tkinter_falta, sympy_falta, numpy_falta, matplotlib_falta = check_dependencies()
     
@@ -363,6 +423,7 @@ def main():
     if not os.path.exists('xonigraf.py'):
         print(f"\n{Colors.RED}Error: No se encuentra xonigraf.py{Colors.END}")
         print(f"   Archivos encontrados: {', '.join(os.listdir('.')[:5])}")
+        print(f"\n{Colors.YELLOW}Asegúrate de tener el archivo xonigraf.py en esta carpeta.{Colors.END}")
         input(f"\n{Colors.YELLOW}Presiona Enter para salir...{Colors.END}")
         return
     
