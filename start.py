@@ -2,7 +2,7 @@
 XoniGraf 2026 - Lanzador Universal
 Este script es el ENCARGADO de ejecutar xonigraf.py
 Detecta automáticamente el sistema y verifica dependencias
-Desarrollado por: Darian Alberto Camacho Salas
+Darian Alberto Camacho Salas
 """
 
 import subprocess
