@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 """
-XoniGraf 2026 - Lanzador Universal (Robusto)
+XoniGraf 2026 - Lanzador Universal con Gestor de Dependencias
 Graficador matemático para equipos de bajos recursos
-Incluye instalación automática de pip, dependencias y múltiples estrategias
+Soporta sumatorias, series de Fourier y funciones complejas
 Desarrollador: Darian Alberto Camacho Salas
 Organización: XONIDU
 """
@@ -109,63 +109,32 @@ def get_install_flags():
     return flags
 
 def get_script_dir():
-    """Obtiene el directorio donde está guardado este script (start.py)"""
     return os.path.dirname(os.path.abspath(__file__))
 
-def get_fixed_xonigraf_dir():
-    """Devuelve la ruta fija /home/usuario/xonigraf/"""
-    usuario = os.path.expanduser("~")
-    nombre_usuario = os.path.basename(usuario)
-    return os.path.join('/home', nombre_usuario, 'xonigraf')
-
 def get_xonigraf_path():
-    """
-    Detecta la ruta de xonigraf.py:
-    1. Primero busca en el mismo directorio que start.py
-    2. Si no, busca en la carpeta xonigraf/
-    3. Si no, usa la ruta fija /home/usuario/xonigraf/
-    """
+    """Detecta la ruta de xonigraf.py en múltiples ubicaciones"""
     script_dir = get_script_dir()
-    
-    # Opción 1: Mismo directorio
-    ruta_local = os.path.join(script_dir, 'xonigraf.py')
-    if os.path.exists(ruta_local):
-        return ruta_local, 'local'
-    
-    # Opción 2: Subcarpeta xonigraf/
-    ruta_subcarpeta = os.path.join(script_dir, 'xonigraf', 'xonigraf.py')
-    if os.path.exists(ruta_subcarpeta):
-        return ruta_subcarpeta, 'subcarpeta'
-    
-    # Opción 3: Ruta fija
-    ruta_fija = os.path.join(get_fixed_xonigraf_dir(), 'xonigraf.py')
-    if os.path.exists(ruta_fija):
-        return ruta_fija, 'fija'
-    
-    # Si no existe en ningún lado, devolvemos la local como predeterminada
-    return ruta_local, 'ninguna'
-
-def get_xonigraf_dir():
-    """Devuelve el directorio donde está xonigraf.py"""
-    ruta, _ = get_xonigraf_path()
-    return os.path.dirname(ruta)
+    rutas = [
+        os.path.join(script_dir, 'xonigraf.py'),
+        os.path.join(script_dir, 'xonigraf', 'xonigraf.py'),
+        '/usr/share/xonigraf/xonigraf.py',
+        os.path.join(os.path.expanduser("~"), '.xonigraf', 'xonigraf.py'),
+        os.path.join(os.path.expanduser("~"), 'xonigraf', 'xonigraf.py'),
+        os.path.join(os.getcwd(), 'xonigraf.py')
+    ]
+    for r in rutas:
+        if os.path.exists(r):
+            return r
+    return None
 
 def print_banner():
     sistema = get_system()
     distro = get_linux_distro()
-    ruta_xonigraf, origen = get_xonigraf_path()
     sistema_texto = {
         'windows': 'WINDOWS',
         'linux': f'LINUX ({distro.upper()})' if distro else 'LINUX',
         'darwin': 'MACOS'
     }.get(sistema, 'DESCONOCIDO')
-    
-    origen_texto = {
-        'local': 'MISMO DIRECTORIO',
-        'subcarpeta': 'SUBCARPETA xonigraf/',
-        'fija': '/HOME/USUARIO/XONIGRAF',
-        'ninguna': 'NO ENCONTRADO'
-    }.get(origen, 'DESCONOCIDO')
     
     banner = f"""
 {Colors.PURPLE}{Colors.BOLD}╔══════════════════════════════════════════════════════════╗
@@ -174,7 +143,6 @@ def print_banner():
 ║                   Optimizado para 1GB RAM                   ║
 ║                                                            ║
 ║               Sistema detectado: {sistema_texto:<27} ║
-║               Origen xonigraf.py: {origen_texto:<27} ║
 ║                                                            ║
 ║               Desarrollado por: Darian Alberto             ║
 ║                      Camacho Salas                         ║
@@ -183,8 +151,33 @@ def print_banner():
     """
     print(banner)
 
+def mostrar_ayuda():
+    ayuda = f"""
+{Colors.BOLD}USO DE XoniGraf:{Colors.END}
+
+  xonigraf
+
+{Colors.BOLD}CARACTERISTICAS:{Colors.END}
+
+  ✅ Interfaz gráfica simple con Tkinter
+  ✅ Soporte para sumatorias con sintaxis Sum()
+  ✅ 3 ejemplos precargados
+  ✅ Optimizado para 1GB RAM y procesadores lentos
+
+{Colors.BOLD}EJEMPLOS DE EXPRESIONES:{Colors.END}
+
+  Sum(cos(pi*x*n/2), (n,1,10))
+  Sum(n*cos(pi*x*n/2), (n,1,5))
+  Sum((-4/(pi*x**2))*(cos(pi*x/2)-1)*cos(n/2), (n,1,8))
+
+{Colors.BOLD}FUNCIONES DISPONIBLES:{Colors.END}
+
+  cos, sin, tan, sqrt, exp, log, abs, pi, E
+    """
+    print(ayuda)
+
 # ============================================================================
-# Verificación e instalación de pip
+# Verificación de dependencias
 # ============================================================================
 def check_python():
     try:
@@ -224,18 +217,6 @@ def install_pip_linux():
             return True
         except:
             return False
-    elif distro == 'centos':
-        try:
-            subprocess.run(['sudo', 'yum', 'install', '-y', 'python3-pip'], check=True)
-            return True
-        except:
-            return False
-    elif distro == 'opensuse':
-        try:
-            subprocess.run(['sudo', 'zypper', 'install', '-y', 'python3-pip'], check=True)
-            return True
-        except:
-            return False
     return False
 
 def install_pip_windows():
@@ -244,18 +225,8 @@ def install_pip_windows():
         subprocess.run([sys.executable, '-m', 'ensurepip', '--upgrade'], check=True)
         return True
     except:
-        try:
-            import urllib.request
-            urllib.request.urlretrieve('https://bootstrap.pypa.io/get-pip.py', 'get-pip.py')
-            subprocess.run([sys.executable, 'get-pip.py'], check=True)
-            os.remove('get-pip.py')
-            return True
-        except:
-            return False
+        return False
 
-# ============================================================================
-# Instalación de dependencias Python
-# ============================================================================
 def check_package(package):
     """Verifica si un paquete de Python está instalado"""
     try:
@@ -265,13 +236,10 @@ def check_package(package):
         return False
 
 def install_package(package):
-    """Instala un paquete de Python usando pip con los flags adecuados"""
+    """Instala un paquete de Python usando pip"""
     print(f"{Colors.YELLOW}Instalando {package}...{Colors.END}")
-    
     if not check_pip():
-        print(f"{Colors.RED}No se encontró pip. Instálalo primero.{Colors.END}")
         return False
-    
     flags = get_install_flags()
     try:
         cmd = get_pip_command() + ['install', package] + flags
@@ -279,35 +247,14 @@ def install_package(package):
         print(f"{Colors.GREEN}{package} instalado correctamente.{Colors.END}")
         return True
     except:
-        # Intentar sin flags
         try:
             cmd = get_pip_command() + ['install', package]
             subprocess.run(cmd, check=True)
             print(f"{Colors.GREEN}{package} instalado correctamente.{Colors.END}")
             return True
-        except Exception as e:
-            print(f"{Colors.RED}Error instalando {package}: {e}{Colors.END}")
+        except:
             return False
 
-def install_all_dependencies():
-    """Instala todas las dependencias necesarias para XoniGraf"""
-    dependencias = ['sympy', 'numpy', 'matplotlib']
-    todas_ok = True
-    
-    for dep in dependencias:
-        if not check_package(dep):
-            print(f"\n{Colors.YELLOW}⚠️ {dep} no encontrado. Instalando...{Colors.END}")
-            if not install_package(dep):
-                print(f"{Colors.RED}Fallo crítico: no se pudo instalar {dep}. Abortando.{Colors.END}")
-                todas_ok = False
-        else:
-            print(f"{Colors.GREEN}✓ {dep} disponible{Colors.END}")
-    
-    return todas_ok
-
-# ============================================================================
-# Verificación de tkinter (dependencia del sistema)
-# ============================================================================
 def check_tkinter():
     """Verifica si tkinter está disponible"""
     try:
@@ -343,54 +290,44 @@ def install_tkinter_linux():
         except:
             return False
     else:
-        print(f"{Colors.YELLOW}No se pudo instalar tkinter automáticamente.{Colors.END}")
-        print("  Instálalo manualmente:")
-        print("    Ubuntu/Debian: sudo apt install python3-tk")
-        print("    Arch/Manjaro: sudo pacman -S tk")
-        print("    Fedora: sudo dnf install python3-tkinter")
+        print(f"{Colors.YELLOW}Instala tkinter manualmente:{Colors.END}")
+        print("  Ubuntu/Debian: sudo apt install python3-tk")
+        print("  Arch/Manjaro: sudo pacman -S tk")
+        print("  Fedora: sudo dnf install python3-tkinter")
         return False
 
+def install_all_dependencies():
+    """Instala todas las dependencias necesarias para XoniGraf"""
+    dependencias = ['sympy', 'numpy', 'matplotlib']
+    todas_ok = True
+    
+    print(f"\n{Colors.BOLD}Verificando dependencias...{Colors.END}")
+    
+    for dep in dependencias:
+        if not check_package(dep):
+            print(f"{Colors.YELLOW}⚠️ {dep} no encontrado. Instalando...{Colors.END}")
+            if not install_package(dep):
+                print(f"{Colors.RED}✗ No se pudo instalar {dep}{Colors.END}")
+                todas_ok = False
+        else:
+            print(f"{Colors.GREEN}✓ {dep} disponible{Colors.END}")
+    
+    return todas_ok
+
 # ============================================================================
-# Verificación de xonigraf.py y ejecución
+# Gestión de configuración
 # ============================================================================
-def check_xonigraf():
-    ruta, origen = get_xonigraf_path()
-    existe = os.path.exists(ruta)
-    if not existe:
-        print(f"{Colors.RED}❌ No se encuentra xonigraf.py{Colors.END}")
-        print(f"   Buscado en: {ruta}")
-    return existe
+def get_config_dir():
+    """Devuelve el directorio de configuración de XoniGraf"""
+    home = os.path.expanduser("~")
+    config_dir = os.path.join(home, '.xonigraf')
+    os.makedirs(config_dir, exist_ok=True)
+    return config_dir
 
-def mostrar_ayuda():
-    """Muestra ayuda de uso"""
-    ayuda = f"""
-{Colors.BOLD}USO DE XoniGraf:{Colors.END}
-
-  python start.py
-
-{Colors.BOLD}DESCRIPCION:{Colors.END}
-
-  XoniGraf es un graficador matemático ligero que permite visualizar
-  funciones complejas, incluyendo sumatorias y series de Fourier,
-  optimizado para equipos de bajos recursos como ASUS Eee PC.
-
-{Colors.BOLD}CARACTERISTICAS:{Colors.END}
-
-  ✅ Interfaz gráfica simple con Tkinter
-  ✅ Soporte para sumatorias con sintaxis Sum()
-  ✅ 3 ejemplos precargados
-  ✅ Optimizado para 1GB RAM y procesadores lentos
-
-{Colors.BOLD}EJEMPLOS DE EXPRESIONES:{Colors.END}
-
-  Sum(cos(pi*x*n/2), (n,1,10))
-  Sum(n*cos(pi*x*n/2), (n,1,5))
-  Sum((-4/(pi*x**2))*(cos(pi*x/2)-1)*cos(n/2), (n,1,8))
-    """
-    print(ayuda)
-
+# ============================================================================
+# Función principal
+# ============================================================================
 def main():
-    # Limpiar pantalla
     if get_system() == 'windows':
         os.system('cls')
     else:
@@ -398,99 +335,80 @@ def main():
     
     print_banner()
     
-    # Verificar argumentos de ayuda
     if len(sys.argv) > 1 and sys.argv[1] in ['-h', '--help', '/?']:
         mostrar_ayuda()
         if get_system() != 'windows':
             input(f"\n{Colors.YELLOW}Presiona Enter para salir...{Colors.END}")
         return
     
-    sistema = get_system()
-    distro = get_linux_distro()
-    script_dir = get_script_dir()
-    ruta_xonigraf, origen = get_xonigraf_path()
-    xonigraf_dir = get_xonigraf_dir()
-    
-    print(f"{Colors.BOLD}Sistema operativo:{Colors.END} {sistema}")
-    if distro:
-        print(f"{Colors.BOLD}Distribución:{Colors.END} {distro}")
-    print(f"{Colors.BOLD}Directorio de start.py:{Colors.END} {script_dir}")
-    print(f"{Colors.BOLD}Origen de xonigraf.py:{Colors.END} {origen}")
-    print(f"{Colors.BOLD}Ruta de xonigraf.py:{Colors.END} {ruta_xonigraf}")
-    
-    # Crear directorio si es necesario (solo para ruta fija)
-    if origen == 'ninguna' and not os.path.exists(xonigraf_dir):
-        print(f"\n{Colors.YELLOW}⚠️ El directorio {xonigraf_dir} no existe. Creándolo...{Colors.END}")
-        os.makedirs(xonigraf_dir, exist_ok=True)
-        print(f"{Colors.GREEN}✓ Directorio creado: {xonigraf_dir}{Colors.END}")
-    
-    # Verificar Python
     if not check_python():
-        print(f"\n{Colors.RED}❌ Python no está instalado o no está en el PATH.{Colors.END}")
-        print("   Descarga Python desde: https://www.python.org/downloads/")
+        print(f"\n{Colors.RED}❌ Python no esta instalado{Colors.END}")
         sys.exit(1)
     
-    # Mostrar versión de Python
     ver_py = subprocess.run(get_python_command() + ['--version'], capture_output=True, text=True).stdout.strip()
     print(f"{Colors.BOLD}Python:{Colors.END} {ver_py}")
     
-    # Verificar pip e instalarlo si falta
     if not check_pip():
         print(f"\n{Colors.YELLOW}⚠️ Pip no encontrado. Instalando...{Colors.END}")
+        sistema = get_system()
         if sistema == 'linux':
             if not install_pip_linux():
-                print(f"{Colors.RED}No se pudo instalar pip. Instálalo manualmente.{Colors.END}")
+                print(f"{Colors.RED}No se pudo instalar pip.{Colors.END}")
                 sys.exit(1)
         elif sistema == 'windows':
             if not install_pip_windows():
-                print(f"{Colors.RED}No se pudo instalar pip. Ejecuta como administrador.{Colors.END}")
+                print(f"{Colors.RED}No se pudo instalar pip.{Colors.END}")
                 sys.exit(1)
-        else:
-            print(f"{Colors.YELLOW}Instala pip manualmente con: python -m ensurepip --upgrade{Colors.END}")
-            sys.exit(1)
     else:
         print(f"{Colors.GREEN}✓ Pip disponible{Colors.END}")
     
-    # Verificar e instalar tkinter (solo Linux)
-    if sistema == 'linux' and not check_tkinter():
+    # Verificar tkinter (solo Linux)
+    if get_system() == 'linux' and not check_tkinter():
         print(f"\n{Colors.YELLOW}⚠️ tkinter no encontrado. Instalando...{Colors.END}")
         if not install_tkinter_linux():
-            print(f"{Colors.YELLOW}⚠️ tkinter no se instaló automáticamente. Instálalo manualmente si es necesario.{Colors.END}")
+            print(f"{Colors.YELLOW}⚠️ tkinter no se instaló automáticamente{Colors.END}")
     else:
         print(f"{Colors.GREEN}✓ tkinter disponible{Colors.END}")
     
     # Verificar e instalar dependencias Python
     if not install_all_dependencies():
-        print(f"{Colors.RED}Fallo crítico: no se pudieron instalar todas las dependencias. Abortando.{Colors.END}")
+        print(f"\n{Colors.RED}❌ No se pudieron instalar todas las dependencias{Colors.END}")
+        print(f"{Colors.YELLOW}Puedes instalarlas manualmente con:{Colors.END}")
+        print("  pip install sympy numpy matplotlib")
         sys.exit(1)
     
-    # Verificar que existe xonigraf.py
-    if not check_xonigraf():
-        print(f"\n{Colors.RED}❌ Error crítico: No se encuentra xonigraf.py{Colors.END}")
-        if origen == 'ninguna':
-            print(f"   Puedes copiar xonigraf.py a:")
-            print(f"     - {script_dir} (donde está start.py)")
-            print(f"     - O a {get_fixed_xonigraf_dir()}")
+    ruta_xonigraf = get_xonigraf_path()
+    if not ruta_xonigraf:
+        print(f"\n{Colors.RED}❌ No se encuentra xonigraf.py{Colors.END}")
+        print(f"{Colors.YELLOW}Buscado en:{Colors.END}")
+        print("  - Mismo directorio que start.py")
+        print("  - /usr/share/xonigraf/")
+        print("  - ~/.xonigraf/")
+        print("  - ~/xonigraf/")
         sys.exit(1)
     
-    # Cambiar al directorio de xonigraf.py
+    xonigraf_dir = os.path.dirname(ruta_xonigraf)
+    print(f"{Colors.GREEN}✓ xonigraf.py encontrado en: {xonigraf_dir}{Colors.END}")
+    
+    # Crear directorio de configuración
+    config_dir = get_config_dir()
+    print(f"{Colors.GREEN}✓ Directorio de configuración: {config_dir}{Colors.END}")
+    
     os.chdir(xonigraf_dir)
-    print(f"{Colors.GREEN}✓ Cambiando al directorio: {xonigraf_dir}{Colors.END}")
-    
-    # Ejecutar xonigraf.py
     print(f"\n{Colors.BOLD}🚀 Iniciando XoniGraf...{Colors.END}")
     print(f"{Colors.CYAN}Para salir: cierra la ventana gráfica o presiona Ctrl+C{Colors.END}")
     print("-"*50)
+    
     try:
         python_cmd = get_python_command()
-        subprocess.run(python_cmd + ['xonigraf.py'])
+        subprocess.run(python_cmd + [ruta_xonigraf])
     except KeyboardInterrupt:
         print(f"\n{Colors.YELLOW}🛑 Programa detenido por el usuario.{Colors.END}")
     except Exception as e:
-        print(f"\n{Colors.RED}❌ Error ejecutando xonigraf.py: {e}{Colors.END}")
+        print(f"\n{Colors.RED}❌ Error: {e}{Colors.END}")
     
     print(f"\n{Colors.GREEN}Gracias por usar XoniGraf 2026{Colors.END}")
-    if sistema != 'windows':
+    if get_system() != 'windows':
         input(f"{Colors.YELLOW}Presiona Enter para salir...{Colors.END}")
 
 if __name__ == '__main__':
