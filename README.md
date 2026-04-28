@@ -1,70 +1,114 @@
 # XoniGraf - Graficador Matemático de Bajos Recursos
 
-Desarrollador: Darian Alberto Camacho Salas
+[![AUR version](https://img.shields.io/aur/version/xonigraf)](https://aur.archlinux.org/packages/xonigraf)
+[![AUR votes](https://img.shields.io/aur/votes/xonigraf)](https://aur.archlinux.org/packages/xonigraf)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Aplicación de escritorio liviana para graficar funciones matemáticas, especialmente diseñada para ASUS Eee PC y equipos de bajos recursos. Soporta sumatorias, funciones trigonométricas y expresiones complejas.
+**Desarrollado por:** Darian Alberto Camacho Salas  
+**Organización:** XONIDU
+
+Aplicación de escritorio liviana para graficar funciones matemáticas, especialmente diseñada para **ASUS Eee PC** y equipos de bajos recursos. Soporta sumatorias, funciones trigonométricas y expresiones complejas.
 
 ---
 
 ## ⚠️ ADVERTENCIA
+
 Este código tiene **únicamente fines educativos** para democratizar el acceso al software matemático.
+
+---
 
 ## 📁 Estructura del Proyecto
 
 ```
 xonigraf/
-├── start.py                 # 🟢 LANZADOR UNIVERSAL (¡SOLO EJECUTA ESTE!)
-├── xonigraf.py              # 🔵 PROGRAMA PRINCIPAL (graficador)
-├── requisitos.txt           # Dependencias del proyecto
-└── README.md                # Este archivo
+├── start.py                 # 🟢 LANZADOR UNIVERSAL
+├── xonigraf.py              # 🔵 PROGRAMA PRINCIPAL
+├── requirements.txt         # Dependencias
+├── README.md                # Este archivo
+└── LICENSE                  # MIT License
 ```
 
 ---
 
-## 🚀 **ASÍ DE FÁCIL: SOLO EJECUTA start.py**
+## 🚀 INSTALACIÓN
 
-**¡Ya no necesitas hacer nada más!** El archivo `start.py` hace TODO por ti:
-
-✅ Detecta automáticamente tu sistema operativo  
-✅ Verifica qué dependencias faltan (sympy, numpy, matplotlib, tkinter)  
-✅ **Las instala automáticamente** con los comandos correctos  
-✅ Ejecuta el programa principal  
-
-## 🪟 **PARA WINDOWS**
+### 📦 **Arch Linux / Manjaro (AUR)**
 
 ```bash
-# Abre CMD o PowerShell y escribe:
+# Instalar desde AUR
+yay -S xonigraf
+
+# O con paru
+paru -S xonigraf
+
+# Ejecutar
+xonigraf
+```
+
+### 🐧 **Otras distribuciones Linux**
+
+```bash
+# Clonar repositorio
+git clone https://github.com/XONIDU/xonigraf.git
+cd xonigraf
+
+# Instalar dependencias
+pip install sympy numpy matplotlib
+
+# En Debian/Ubuntu/antiX instalar tkinter
+sudo apt install python3-tk
+
+# En Fedora
+sudo dnf install python3-tkinter
+
+# Ejecutar
 python start.py
 ```
 
-## 🐧 **PARA LINUX**
+### 🪟 **Windows**
 
 ```bash
-# Abre terminal y escribe:
-python3 start.py
+# Clonar o descargar
+git clone https://github.com/XONIDU/xonigraf.git
+cd xonigraf
+
+# Instalar dependencias
+pip install sympy numpy matplotlib
+
+# Ejecutar
+python start.py
 ```
 
-## 🍎 **PARA macOS**
+### 🍎 **macOS**
 
 ```bash
-# Abre terminal y escribe:
+# Clonar repositorio
+git clone https://github.com/XONIDU/xonigraf.git
+cd xonigraf
+
+# Instalar dependencias
+pip3 install sympy numpy matplotlib
+
+# Ejecutar
 python3 start.py
 ```
 
 ---
 
-## 🎮 CÓMO USAR XoniGraf
+## 🎮 CÓMO USAR
 
-1️⃣ **Ejecuta** el programa:
-```bash
-python start.py
-```
+1. **Ejecuta** el programa:
+   ```bash
+   xonigraf   # Si instalaste desde AUR
+   # o
+   python start.py
+   ```
 
-2️⃣ **Ingresa tu función** en el campo de texto usando sintaxis de Python/sympy
+2. **Ingresa tu función** en el campo de texto usando sintaxis de Python/sympy
 
-3️⃣ **Define el rango X** en formato `min,max` (ej: `-10,10`)
+3. **Define el rango X** en formato `min,max` (ej: `-10,10`)
 
-4️⃣ **Presiona Enter** o el botón "Graficar" para ver el resultado
+4. **Presiona Enter** o el botón "Graficar" para ver el resultado
 
 ---
 
@@ -99,15 +143,14 @@ Sum(expresión, (variable, inicio, fin))
 
 ---
 
-## 🔧 PROBLEMAS COMUNES (Y SOLUCIONES)
+## 🔧 SOLUCIÓN DE PROBLEMAS COMUNES
 
 | Problema | Solución |
 |----------|----------|
-| `ModuleNotFoundError: No module named 'sympy'` | `start.py` lo instala automáticamente |
+| `ModuleNotFoundError: No module named 'sympy'` | `pip install sympy numpy matplotlib` |
 | `ImportError: No module named tkinter` | En Linux: `sudo apt install python3-tk` (Debian/Ubuntu) o `sudo pacman -S tk` (Arch) |
-| Error `--break-system-packages` no funciona | `pip install --user sympy numpy matplotlib` |
-| Error "name 'sum' is not defined" | Usa siempre `Sum` con mayúscula |
-| No se ve la gráfica | Verifica rango X válido (ej: `-5,5`) |
+| `No se ve la gráfica` | Verifica rango X válido (ej: `-5,5`) |
+| `Error en sumatorias` | Usa siempre `Sum` con mayúscula |
 
 ---
 
@@ -117,6 +160,26 @@ Sum(expresión, (variable, inicio, fin))
 ✅ Libera memoria automáticamente en cada nueva gráfica  
 ✅ Interfaz oscura que reduce consumo de batería  
 ✅ Probado en **ASUS Eee PC 900** (1GB RAM, Celeron M 900MHz)  
+✅ Guarda automáticamente la última expresión en `~/.xonigraf/config.txt`
+
+---
+
+## 📦 DEPENDENCIAS
+
+- Python 3.8+
+- sympy
+- numpy
+- matplotlib
+- tkinter (viene con Python, en Linux a veces requiere instalación separada)
+
+---
+
+## 📂 ARCHIVOS DE CONFIGURACIÓN
+
+XoniGraf guarda la última expresión usada en:
+```
+~/.xonigraf/config.txt
+```
 
 ---
 
@@ -126,16 +189,24 @@ Sum(expresión, (variable, inicio, fin))
 - **📧 Email:** xonidu@gmail.com
 - **📸 Instagram:** @xonidu
 - **💻 GitHub:** [XONIDU/xonigraf](https://github.com/XONIDU/xonigraf)
+- **📦 AUR:** [xonigraf](https://aur.archlinux.org/packages/xonigraf)
 
 ---
 
 ```
-╔════════════════════════════════════╗
-║   XoniGraf 2026 - Hecho con ❤️     ║
-║   por Darian Alberto Camacho Salas ║
-║                                    ║
-║   ¡SOLO EJECUTA start.py!          ║
-║   Él instala todo automáticamente  ║
-╚════════════════════════════════════╝
+╔══════════════════════════════════════════════════════════════╗
+║                                                              ║
+║   XoniGraf 2026 - Hecho con ❤️ por XONIDU                    ║
+║   Graficador matemático ligero para todos                    ║
+║                                                              ║
+║   GitHub: https://github.com/XONIDU/xonigraf                ║
+║   AUR: yay -S xonigraf                                       ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
 ```
+
+---
+
+**BY: XONIDU - Darian Alberto Camacho Salas**  
+*Democratizando el acceso al software matemático*
 
