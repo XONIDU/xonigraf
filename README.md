@@ -1,7 +1,6 @@
 # XoniGraf - Graficador Matemático de Bajos Recursos
 
 [![AUR version](https://img.shields.io/aur/version/xonigraf)](https://aur.archlinux.org/packages/xonigraf)
-[![AUR votes](https://img.shields.io/aur/votes/xonigraf)](https://aur.archlinux.org/packages/xonigraf)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **Desarrollado por:** Darian Alberto Camacho Salas  
