@@ -1,6 +1,7 @@
 # XoniGraf - Graficador Matemático de Bajos Recursos
 
 [![AUR version](https://img.shields.io/aur/version/xonigraf)](https://aur.archlinux.org/packages/xonigraf)
+[![AUR votes](https://img.shields.io/aur/votes/xonigraf)](https://aur.archlinux.org/packages/xonigraf)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **Desarrollado por:** Darian Alberto Camacho Salas  
@@ -31,7 +32,7 @@ xonigraf/
 
 ## 🚀 INSTALACIÓN
 
-### 📦 **Arch Linux / Manjaro (AUR)**
+### 📦 **Opción 1 – Arch Linux / Manjaro (AUR)**
 
 ```bash
 # Instalar desde AUR
@@ -44,7 +45,26 @@ paru -S xonigraf
 xonigraf
 ```
 
-### 🐧 **Otras distribuciones Linux**
+### 🛠️ **Opción 2 – Comando `xoninstall` (recomendado para futuras herramientas XONI)**
+
+Agrega la siguiente función a tu `~/.bashrc` con un solo comando:
+
+```bash
+echo 'xoninstall() { if [ -z "$1" ]; then echo "Uso: xoninstall <repo>"; echo "Ej: xoninstall xoniran"; else git clone "https://github.com/XONIDU/$1.git"; cd "$1"; fi }' >> ~/.bashrc && source ~/.bashrc
+```
+
+Luego simplemente escribe:
+
+```bash
+xoninstall xonigraf
+cd xonigraf
+pip install -r requirements.txt   # o pip install sympy numpy matplotlib
+python start.py
+```
+
+> **Nota:** Esta función te servirá para instalar cualquier otra herramienta futura de XONIDU (por ejemplo `xoninstall xonichat`, `xoninstall xoniran`).
+
+### 🐧 **Opción 3 – Otras distribuciones Linux**
 
 ```bash
 # Clonar repositorio
@@ -64,7 +84,7 @@ sudo dnf install python3-tkinter
 python start.py
 ```
 
-### 🪟 **Windows**
+### 🪟 **Opción 4 – Windows**
 
 ```bash
 # Clonar o descargar
@@ -78,7 +98,7 @@ pip install sympy numpy matplotlib
 python start.py
 ```
 
-### 🍎 **macOS**
+### 🍎 **Opción 5 – macOS**
 
 ```bash
 # Clonar repositorio
@@ -207,5 +227,3 @@ XoniGraf guarda la última expresión usada en:
 ---
 
 **BY: XONIDU - Darian Alberto Camacho Salas**  
-*Democratizando el acceso al software matemático*
-
